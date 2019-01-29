@@ -1,7 +1,7 @@
 # Личный проект «YetiCave»
 
-* Студент: [Игорь Чабанов](https://up.htmlacademy.ru/php/8/user/459853).
-* Наставник: `Неизвестно`.
+- Студент: [Игорь Чабанов](https://up.htmlacademy.ru/php/8/user/459853).
+- Наставник: [Илья Кондрашов](https://htmlacademy.ru/profile/id644427).
 
 ---
 
