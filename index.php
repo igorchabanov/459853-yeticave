@@ -50,6 +50,32 @@ $adverts = [
         'image' => 'img/lot-6.jpg'
     ],
 ];
+
+function format_price($arg) {
+  $price = ceil($arg);
+  $result = number_format($price, 0, '', ' ');
+  $result .= ' <b class="rub">р</b>';
+
+  return $result;
+}
+
+function format_price_string($argument) {
+  $price = (string)ceil($argument);
+  $result = '';
+
+  if($price > 1000) {
+    $last_numbers = substr($price, -3);
+    $count_diff = strlen($price) - strlen($last_numbers);
+    $first_numbers = substr($price, 0, $count_diff);
+
+    $result = $first_numbers . ' ' . $last_numbers;
+  } else {
+    $result .= $price;
+  }
+
+  $result .= ' <b class="rub">р</b>';
+  return $result;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -129,7 +155,7 @@ $adverts = [
               <div class="lot__state">
                 <div class="lot__rate">
                   <span class="lot__amount">Стартовая цена</span>
-                  <span class="lot__cost"><?= $item['price']; ?><b class="rub">р</b></span>
+                  <span class="lot__cost"><?= format_price_string($item['price']); ?></span>
                 </div>
                 <div class="lot__timer timer">
                   12:23
