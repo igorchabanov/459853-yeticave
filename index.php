@@ -61,16 +61,14 @@ function format_price($arg) {
 
 function format_price_string($argument) {
   $price = (string)ceil($argument);
-  $result = '';
+  $result = $price;
 
-  if($price > 1000) {
+  if($price >= 1000) {
     $last_numbers = substr($price, -3);
     $count_diff = strlen($price) - strlen($last_numbers);
     $first_numbers = substr($price, 0, $count_diff);
 
     $result = $first_numbers . ' ' . $last_numbers;
-  } else {
-    $result .= $price;
   }
 
   $result .= ' <b class="rub">р</b>';
