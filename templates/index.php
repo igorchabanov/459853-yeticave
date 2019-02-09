@@ -36,7 +36,7 @@
                             <span class="lot__cost"><?= strip_tags(format_price_string($item['price']), 'b'); ?></span>
                         </div>
                         <div class="lot__timer timer">
-                            12:23
+                            <?= lot_time_end(); ?>
                         </div>
                     </div>
                 </div>
