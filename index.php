@@ -1,17 +1,23 @@
 <?php
-    require_once('functions.php');
-    require_once('data.php');
+require_once('functions.php');
+require_once('data.php');
+
+$is_auth = rand(0, 1);
+
+$main_page = include_template('index.php', [
+    'adverts' => $adverts,
+    'categories' => $categories,
+]);
+
+$layout_content = include_template('layout.php', [
+    'page_content' => $main_page,
+    'meta_title' => 'Главная',
+    'user_name' => 'Игорь',
+    'categories' => $categories,
+    'is_auth' => $is_auth
+]);
 
 
-    $main_page = include_template('index.php', [
-        'adverts'    => $adverts
-    ]);
 
-    $layout_content = include_template('layout.php', [
-        'page_content' => $main_page,
-        'meta_title' => 'Главная',
-        'user_name' => 'Игорь',
-        'categories' => $categories,
-    ]);
 
-    print($layout_content);
+print($layout_content);

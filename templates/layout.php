@@ -1,12 +1,9 @@
-<?php
-$is_auth = rand(0, 1);
-?>
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
   <meta charset="UTF-8">
-  <title><?= $meta_title; ?></title>
+  <title><?= htmlspecialchars($meta_title); ?></title>
   <link href="css/normalize.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
 </head>
