@@ -22,13 +22,13 @@ CREATE TABLE lot (
   start_price INT NOT NULL,
   rate_step INT,
   end_date DATE,
-  created TIMESTAMP
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
 CREATE TABLE rate (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  date TIMESTAMP,
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   amount INT,
   user_id INT,
   lot_id INT
@@ -36,7 +36,7 @@ CREATE TABLE rate (
 
 CREATE TABLE user (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  created TIMESTAMP,
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   email CHAR(128) NOT NULL UNIQUE,
   name CHAR(50) NOT NULL,
   passwd CHAR(32) NOT NULL,
