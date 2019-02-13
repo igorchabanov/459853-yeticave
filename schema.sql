@@ -29,6 +29,7 @@ CREATE TABLE lot (
 CREATE TABLE rate (
   id INT AUTO_INCREMENT PRIMARY KEY,
   created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   amount INT,
   user_id INT,
   lot_id INT
@@ -39,13 +40,14 @@ CREATE TABLE user (
   created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   email CHAR(128) NOT NULL UNIQUE,
   name CHAR(50) NOT NULL,
-  passwd CHAR(32) NOT NULL,
+  passwd CHAR(255) NOT NULL,
   img CHAR(128),
   contact CHAR(10),
-  lot_id INT,
-  rate_id INT
+  lot_id CHAR,
+  rate_id CHAR(128)
 );
 
 CREATE INDEX category ON category(title);
-
 CREATE INDEX lot ON lot(title);
+CREATE INDEX user_lots ON user(lot_id);
+CREATE INDEX rate_step ON lot(rate_step);
