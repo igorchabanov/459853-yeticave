@@ -8,7 +8,8 @@ USE yeticave;
 
 CREATE TABLE category (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  title CHAR(128) NOT NULL
+  title CHAR(128) NOT NULL,
+  FULLTEXT (title)
 );
 
 CREATE TABLE lot (
@@ -22,7 +23,8 @@ CREATE TABLE lot (
   start_price INT NOT NULL,
   rate_step INT,
   end_date DATE,
-  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FULLTEXT (title)
 );
 
 
@@ -43,11 +45,9 @@ CREATE TABLE user (
   passwd CHAR(255) NOT NULL,
   img CHAR(128),
   contact CHAR(10),
-  lot_id CHAR,
+  lot_id CHAR(128),
   rate_id CHAR(128)
 );
 
-CREATE INDEX category ON category(title);
-CREATE INDEX lot ON lot(title);
 CREATE INDEX user_lots ON user(lot_id);
 CREATE INDEX rate_step ON lot(rate_step);
