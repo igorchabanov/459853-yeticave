@@ -16,15 +16,14 @@ CREATE TABLE lot (
   id INT AUTO_INCREMENT PRIMARY KEY,
   cat_id INT NOT NULL,
   author_id INT NOT NULL,
-  user_id INT NOT NULL,
+  winner_id INT NOT NULL,
   title CHAR(128) NOT NULL,
   description TEXT,
   img_path CHAR(128),
   start_price INT NOT NULL,
   rate_step INT,
   end_date DATE,
-  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FULLTEXT (title)
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -33,8 +32,8 @@ CREATE TABLE rate (
   created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   amount INT NOT NULL,
-  user_id INT,
-  lot_id INT
+  user_id INT NOT NULL,
+  lot_id INT NOT NULL
 );
 
 CREATE TABLE user (
@@ -45,9 +44,9 @@ CREATE TABLE user (
   passwd CHAR(255) NOT NULL,
   img CHAR(128),
   contact CHAR(10),
-  -- lot_id CHAR(128),
-  -- rate_id CHAR(128)
 );
 
-CREATE INDEX user_lots ON user(lot_id);
-CREATE INDEX rate_step ON lot(rate_step);
+CREATE INDEX opened_lots ON lot(lot_id, end_date);
+CREATE INDEX latest_rate ON rate(id, amount, created);
+
+CREATE FULLTEXT INDEX title_descr ON lot(title, description);
