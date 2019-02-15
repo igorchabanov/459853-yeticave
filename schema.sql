@@ -43,10 +43,10 @@ CREATE TABLE user (
   name CHAR(50) NOT NULL,
   passwd CHAR(255) NOT NULL,
   img CHAR(128),
-  contact CHAR(10),
+  contact CHAR(10)
 );
 
-CREATE INDEX opened_lots ON lot(lot_id, end_date);
+CREATE INDEX opened_lots ON lot(id, end_date);
 CREATE INDEX latest_rate ON rate(id, amount, created);
 
 CREATE FULLTEXT INDEX title_descr ON lot(title, description);
