@@ -32,7 +32,7 @@ CREATE TABLE rate (
   id INT AUTO_INCREMENT PRIMARY KEY,
   created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  amount INT,
+  amount INT NOT NULL,
   user_id INT,
   lot_id INT
 );
@@ -45,8 +45,8 @@ CREATE TABLE user (
   passwd CHAR(255) NOT NULL,
   img CHAR(128),
   contact CHAR(10),
-  lot_id CHAR(128),
-  rate_id CHAR(128)
+  -- lot_id CHAR(128),
+  -- rate_id CHAR(128)
 );
 
 CREATE INDEX user_lots ON user(lot_id);
