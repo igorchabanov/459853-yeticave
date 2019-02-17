@@ -22,7 +22,7 @@ CREATE TABLE lot (
   img_path CHAR(128),
   start_price INT NOT NULL,
   rate_step INT,
-  end_date DATETIME,
+  end_date DATE,
   created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE user (
   contact CHAR(10)
 );
 
-CREATE INDEX opened_lots ON lot(id, end_date);
-CREATE INDEX latest_rate ON rate(id, amount, created);
+CREATE INDEX opened_lots ON lot(end_date);
+CREATE INDEX all_rates ON rate(lot_id, amount);
 
 CREATE FULLTEXT INDEX title_descr ON lot(title, description);
