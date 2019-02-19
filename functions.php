@@ -3,8 +3,8 @@
 /**
  * Вывод шаблона
  *
- * @param string template $name
- * @param array with data $data
+ * @param string $name template
+ * @param array $data with data
  */
 function include_template($name, $data)
 {
@@ -31,7 +31,6 @@ function include_template($name, $data)
  *
  * @return string
  */
-
 function format_price($arg)
 {
     $price = ceil($arg);
@@ -94,7 +93,12 @@ function lot_time_end()
 function get_connect($database)
 {
     $db_con = mysqli_connect($database['host'], $database['user'], $database['passwd'], $database['db_name']);
-    mysqli_set_charset($db_con, 'utf8');
+
+    if(!$db_con) {
+        die ("Ошибка подключения: " . mysqli_connect_error());
+    } else {
+        mysqli_set_charset($db_con, 'utf8');
+    }
 
     return $db_con;
 }
@@ -114,6 +118,8 @@ function get_categories($db_con)
 
     if($query) {
         $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
     return $result;
@@ -138,6 +144,8 @@ function get_adverts($db_con)
 
     if($query) {
         $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
     return $result;
