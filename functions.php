@@ -94,7 +94,7 @@ function get_connect($database)
 {
     $db_con = mysqli_connect($database['host'], $database['user'], $database['passwd'], $database['db_name']);
 
-    if(!$db_con) {
+    if (!$db_con) {
         die ("Ошибка подключения: " . mysqli_connect_error());
     } else {
         mysqli_set_charset($db_con, 'utf8');
@@ -116,7 +116,7 @@ function get_categories($db_con)
     $sql = 'SELECT `id`, `title` FROM category';
     $query = mysqli_query($db_con, $sql);
 
-    if($query) {
+    if ($query) {
         $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
     } else {
         die('Произошла ошибка ' . mysqli_error($db_con));
@@ -134,7 +134,7 @@ function get_categories($db_con)
  */
 function get_adverts($db_con)
 {
-    $sql = 'SELECT l.title, l.start_price, l.img_path, l.end_date, c.title AS category
+    $sql = 'SELECT l.id, l.title, l.start_price, l.img_path, l.end_date, c.title AS category
             FROM lot l
             JOIN category c ON l.cat_id = c.id
             WHERE l.end_date > NOW()
@@ -142,10 +142,34 @@ function get_adverts($db_con)
 
     $query = mysqli_query($db_con, $sql);
 
-    if($query) {
+    if ($query) {
         $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
     } else {
         die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return $result;
+}
+
+/**
+ * Получаем лот по его id
+ */
+
+function get_item_by_id($db_con, $id)
+{
+    $sql = 'SELECT l.title, l.img_path, l.rate_step, COALESCE(MAX(r.amount), l.start_price) AS price, c.title AS cat
+            FROM lot l
+            JOIN category c ON l.cat_id = c.id
+            JOIN rate r ON l.id = r.lot_id
+            WHERE l.id = ' . $id;
+
+    $query = mysqli_query($db_con, $sql);
+
+    if($query) {
+//        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
+        $result = mysqli_fetch_assoc($query);
+    } else {
+        die('SOME trouble');
     }
 
     return $result;
