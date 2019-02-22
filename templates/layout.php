@@ -45,7 +45,7 @@
       </div>
     </header>
 
-    <main class="container">
+    <main class="<?php ($home_page) ? print 'container' : '';  ?>" >
       <?= $page_content; ?>
     </main>
   </div>

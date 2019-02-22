@@ -6,8 +6,6 @@ require_once('config/config.php');
 date_default_timezone_set('Europe/Moscow');
 
 
-$db_con = get_connect($database);
-
 $categories = get_categories($db_con);
 $adverts = get_adverts($db_con);
 
@@ -21,7 +19,8 @@ $layout_content = include_template('layout.php', [
     'meta_title' => 'Главная',
     'user_name' => $username,
     'categories' => $categories,
-    'is_auth' => $is_auth
+    'is_auth' => $is_auth,
+    'home_page' => true
 ]);
 
 print($layout_content);

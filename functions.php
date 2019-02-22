@@ -164,14 +164,14 @@ function get_adverts($db_con)
 
 function get_item_by_id($db_con, int $id)
 {
-    $sql = 'SELECT l.title, l.description,  l.img_path, l.rate_step, COALESCE(MAX(r.amount), l.start_price) AS price, c.title AS cat
+    $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, COALESCE( MAX(r.amount), l.start_price ) AS price, c.title AS cat
             FROM lot l
             LEFT JOIN category c ON l.cat_id = c.id
-            LEFT JOIN rate r ON l.id = r.lot_id
-            WHERE l.id = ' . $id . ';';
+            LEFT JOIN rate r ON r.lot_id = l.id
+            WHERE l.id = '$id'
+            GROUP BY l.id;";
 
     $query = mysqli_query($db_con, $sql);
-
 
     if($query) {
         $result = mysqli_fetch_assoc($query);
