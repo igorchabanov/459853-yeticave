@@ -10,7 +10,7 @@ if (isset($_GET['id'])) {
     $item = get_item_by_id($db_con, $id);
     $categories = get_categories($db_con);
 
-    if(!in_array(null, $item, true)) {
+    if($item['title'] !== null) {
 
         $content = include_template('lot.php', [
             'user_name' => 'Игорь',
@@ -25,5 +25,8 @@ if (isset($_GET['id'])) {
     }
 
     print($content);
+} else {
+    http_response_code(404);
+    $content = '';
 }
 

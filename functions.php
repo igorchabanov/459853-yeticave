@@ -5,6 +5,8 @@
  *
  * @param string $name template
  * @param array $data with data
+ *
+ * @return string
  */
 function include_template($name, $data)
 {
@@ -90,7 +92,7 @@ function lot_time_end()
  * @return object $db_con
  */
 
-function get_connect($database)
+function get_connect(array $database)
 {
     $db_con = mysqli_connect($database['host'], $database['user'], $database['passwd'], $database['db_name']);
 
@@ -153,23 +155,28 @@ function get_adverts($db_con)
 
 /**
  * Получаем лот по его id
+ *
+ * @param object $db_con
+ * @param int $id
+ *
+ * @return array $result
  */
 
-function get_item_by_id($db_con, $id)
+function get_item_by_id($db_con, int $id)
 {
-    $sql = 'SELECT l.title, l.img_path, l.rate_step, COALESCE(MAX(r.amount), l.start_price) AS price, c.title AS cat
+    $sql = 'SELECT l.title, l.description,  l.img_path, l.rate_step, COALESCE(MAX(r.amount), l.start_price) AS price, c.title AS cat
             FROM lot l
-            JOIN category c ON l.cat_id = c.id
-            JOIN rate r ON l.id = r.lot_id
-            WHERE l.id = ' . $id;
+            LEFT JOIN category c ON l.cat_id = c.id
+            LEFT JOIN rate r ON l.id = r.lot_id
+            WHERE l.id = ' . $id . ';';
 
     $query = mysqli_query($db_con, $sql);
 
+
     if($query) {
-//        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
         $result = mysqli_fetch_assoc($query);
     } else {
-        die('SOME trouble');
+        die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
     return $result;

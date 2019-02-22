@@ -59,7 +59,7 @@
                     </div>
                     <p class="lot-item__category">Категория: <span><?= $lot['cat']; ?></span></p>
                     <p class="lot-item__description">
-
+                        <?= $lot['description']; ?>
                     </p>
                 </div>
                 <div class="lot-item__right">
