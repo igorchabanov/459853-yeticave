@@ -1,5 +1,7 @@
 <?php
 
+require_once('mysql_helper.php');
+
 /**
  * Вывод шаблона
  *
@@ -176,11 +178,40 @@ function get_item_by_id($db_con, int $id)
 
     $query = mysqli_query($db_con, $sql);
 
-    if($query) {
+    if ($query) {
         $result = mysqli_fetch_assoc($query);
     } else {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
+
+    return $result;
+}
+
+/**
+ * Запись лота в БД
+ *
+ * @param object $db_con -- ресурс соединения
+ * @param array $new_lot -- массив с новым товаром
+ *
+ * @return bool $res;
+ */
+
+function insert_lot($db_con, $new_lot)
+{
+    $sql = "INSERT INTO lot(title, description, cat_id, start_price, img_path, rate_step, author_id, winner_id, end_date) 
+            VALUES(?, ?, ?, ?, ?, ?, 7, 2, ?);";
+
+    $stmt = db_get_prepare_stmt($db_con, $sql, [
+        $new_lot['lot-name'],
+        $new_lot['message'],
+        $new_lot['category'],
+        $new_lot['lot-rate'],
+        $new_lot['img_path'],
+        $new_lot['lot-step'],
+        $new_lot['lot-date']
+    ]);
+
+    $result = mysqli_stmt_execute($stmt);
 
     return $result;
 }
