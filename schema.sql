@@ -16,7 +16,7 @@ CREATE TABLE lot (
   id INT AUTO_INCREMENT PRIMARY KEY,
   cat_id INT NOT NULL,
   author_id INT NOT NULL,
-  winner_id INT NOT NULL,
+  winner_id INT NULL,
   title CHAR(128) NOT NULL,
   description TEXT,
   img_path CHAR(128),

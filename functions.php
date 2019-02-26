@@ -215,3 +215,5 @@ function insert_lot($db_con, $new_lot)
 
     return $result;
 }
+
+
