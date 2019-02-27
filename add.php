@@ -35,10 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-
-    $user_date = date('d.m.Y', strtotime($_POST['lot-date']));
-
-    if (!check_date_format($user_date)) {
+    if (!check_date_format($_POST['lot-date'])) {
         $errors['lot-date'] = 'Некорректный формат даты';
     } elseif (!check_date_end($_POST['lot-date'])) {
         $errors['lot-date'] = 'Дата окончания должна быть позже на 1 день';

@@ -116,7 +116,7 @@ $classname = isset($errors) ? 'form--invalid' : '';
         ?>
         <div class="form__item <?= $classname; ?>">
             <label for="lot-date">Дата окончания торгов</label>
-            <input class="form__input-date" id="lot-date" type="date" value="<?= htmlspecialchars($value); ?>" name="lot-date">
+            <input class="form__input-date" id="lot-date" type="text" placeholder="дд.мм.гггг" value="<?= htmlspecialchars($value); ?>" name="lot-date">
             <span class="form__error"><?= $error; ?></span>
         </div>
     </div>
