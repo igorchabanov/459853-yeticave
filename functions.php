@@ -216,4 +216,36 @@ function insert_lot($db_con, $new_lot)
     return $result;
 }
 
+/**
+ * Проверяет, что переданная дата соответствует формату ДД.ММ.ГГГГ
+ * @param string $date строка с датой
+ * @return bool
+ */
+function check_date_format($date)
+{
+    $result = false;
+    $regexp = '/(\d{2})\.(\d{2})\.(\d{4})/m';
+    if (preg_match($regexp, $date, $parts) && count($parts) == 4) {
+        $result = checkdate($parts[2], $parts[1], $parts[3]);
+    }
+    return $result;
+}
 
+/**
+ * Проверяем дату окончания
+ * @param $date
+ *
+ * @return bool $result
+ */
+
+function check_date_end($date)
+{
+
+    $user_date = strtotime($date);
+
+
+    $diff = $user_date - strtotime('now');
+    $days = floor($diff / 86400);
+
+    return $result = ($days > 0) ? true : false;
+}

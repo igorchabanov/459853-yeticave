@@ -29,15 +29,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-//    var_dump($new_lot);
-
     foreach ($numbers as $field) {
-        if(!is_numeric($_POST[$field]) || $_POST[$field] <= 0 ) {
+        if (!is_numeric($_POST[$field]) || $_POST[$field] <= 0) {
             $errors[$field] = $dict[$field];
         }
     }
 
-// todo Првоерка на дату окончания
+
+    $user_date = date('d.m.Y', strtotime($_POST['lot-date']));
+
+    if (!check_date_format($user_date)) {
+        $errors['lot-date'] = 'Некорректный формат даты';
+    } elseif (!check_date_end($_POST['lot-date'])) {
+        $errors['lot-date'] = 'Дата окончания должна быть позже на 1 день';
+    }
 
     // Загрузка img
     if (isset($_FILES['lot-img']) && !empty($_FILES['lot-img']['name'])) {
@@ -45,9 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_name = $_FILES['lot-img']['name'];
         $file_type = mime_content_type($tmp_name);
 
-        // todo добавить проверку на png
-        if($file_type === "image/jpeg") {
+        if ($file_type === "image/jpeg") {
             $img_ext = '.jpg';
+        } elseif ($file_type === "image/png") {
+            $img_ext = '.png';
         }
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -59,8 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $errors['file'] = $dict['file'];
     }
-
-
 
 
     if (count($errors)) {
@@ -88,10 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: /lot.php?id=" . $lot_id);
             die();
         } else {
-            // todo страница ошибок
-            http_response_code(404);
-
-            $add_page = include_template('404.php', [
+            $add_page = include_template('error.php', [
+                'message' => 'Произошла ошибка, попробуйте отправить форму позже.',
                 'categories' => $categories
             ]);
         }
