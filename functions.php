@@ -213,6 +213,10 @@ function insert_lot($db_con, $new_lot)
 
     $result = mysqli_stmt_execute($stmt);
 
+    if (!$result) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
     return $result;
 }
 
@@ -229,23 +233,4 @@ function check_date_format($date)
         $result = checkdate($parts[2], $parts[1], $parts[3]);
     }
     return $result;
-}
-
-/**
- * Проверяем дату окончания
- * @param $date
- *
- * @return bool $result
- */
-
-function check_date_end($date)
-{
-
-    $user_date = strtotime($date);
-
-
-    $diff = $user_date - strtotime('now');
-    $days = floor($diff / 86400);
-
-    return $result = ($days > 0) ? true : false;
 }

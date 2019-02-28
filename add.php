@@ -30,34 +30,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     foreach ($numbers as $field) {
-        if (!is_numeric($_POST[$field]) || $_POST[$field] <= 0) {
+        if (empty($_POST[$field]) || !is_numeric($_POST[$field]) || $_POST[$field] <= 0) {
             $errors[$field] = $dict[$field];
         }
     }
 
-    if (!check_date_format($_POST['lot-date'])) {
+    if (empty($_POST['lot-date']) || !check_date_format($_POST['lot-date'])) {
         $errors['lot-date'] = 'Некорректный формат даты';
-    } elseif (!check_date_end($_POST['lot-date'])) {
+    } elseif (strtotime($_POST['lot-date']) < strtotime('tomorrow')) {
         $errors['lot-date'] = 'Дата окончания должна быть позже на 1 день';
     }
+
 
     // Загрузка img
     if (isset($_FILES['lot-img']) && !empty($_FILES['lot-img']['name'])) {
         $tmp_name = $_FILES['lot-img']['tmp_name'];
         $file_name = $_FILES['lot-img']['name'];
-        $file_type = mime_content_type($tmp_name);
+        $file_mime = mime_content_type($tmp_name);
 
-        if ($file_type === "image/jpeg") {
-            $img_ext = '.jpg';
-        } elseif ($file_type === "image/png") {
-            $img_ext = '.png';
+
+        if ($file_mime !== "image/png" && $file_mime !== 'image/jpeg') {
+            $errors['file'] = $dict['file'];
         }
 
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $file_type = finfo_file($finfo, $tmp_name);
-
-        if (empty($finfo) || $file_type !== "image/jpeg") {
-            $errors['file'] = $dict['file'];
+        if ($file_mime === "image/jpeg") {
+            $img_ext = '.jpg';
+        } elseif ($file_mime === "image/png") {
+            $img_ext = '.png';
         }
     } else {
         $errors['file'] = $dict['file'];
