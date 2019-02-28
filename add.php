@@ -87,11 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             header("Location: /lot.php?id=" . $lot_id);
             die();
-        } else {
-            $add_page = include_template('error.php', [
-                'message' => 'Произошла ошибка, попробуйте отправить форму позже.',
-                'categories' => $categories
-            ]);
         }
     }
 
