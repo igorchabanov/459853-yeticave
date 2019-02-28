@@ -14,14 +14,14 @@
     <header class="main-header">
       <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
-        <a class="main-header__logo">
+        <a <?php ($home_page) ? '' : print "href='/'"?> class="main-header__logo">
           <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
         <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru">
           <input type="search" name="search" placeholder="Поиск лота">
           <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="pages/add-lot.html">Добавить лот</a>
+        <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
 
         <nav class="user-menu">
 
@@ -105,7 +105,7 @@
           </svg>
         </a>
       </div>
-      <a class="main-footer__add-lot button" href="add-lot.html">Добавить лот</a>
+      <a class="main-footer__add-lot button" href="/add.php">Добавить лот</a>
       <div class="main-footer__developed-by">
         <span class="visually-hidden">Разработано:</span>
         <a class="logo-academy" href="https://htmlacademy.ru/intensive/php">
