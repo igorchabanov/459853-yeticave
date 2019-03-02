@@ -234,3 +234,60 @@ function check_date_format($date)
     }
     return $result;
 }
+
+/**
+ *  Проверяет на существование email в БД
+ *
+ * @param object $db_con
+ * @param string $email
+ *
+ * @return bool
+ */
+
+function check_user_email($db_con, string $email)
+{
+
+    $email = mysqli_real_escape_string($db_con, $email);
+    $sql = "SELECT email FROM user WHERE email = '$email'";
+    $query = mysqli_query($db_con, $sql);
+
+    if ($query) {
+        if (mysqli_num_rows($query) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+}
+
+/**
+ * Записывает нового пользователя
+ *
+ * @param $db_con
+ * @param array $new_user
+ * @return bool
+ */
+
+function insert_new_user($db_con, array $new_user)
+{
+    $password = password_hash($new_user['password'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO user(name, email, passwd, contact) VALUES(?, ?, ?, ?)";
+
+    $stmt = db_get_prepare_stmt($db_con, $sql, [
+        $new_user['name'],
+        $new_user['email'],
+        $password,
+        $new_user['message'],
+    ]);
+
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return $result;
+}

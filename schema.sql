@@ -43,7 +43,7 @@ CREATE TABLE user (
   name CHAR(50) NOT NULL,
   passwd CHAR(255) NOT NULL,
   img CHAR(128),
-  contact CHAR(10)
+  contact TEXT NOT NULL
 );
 
 CREATE INDEX opened_lots ON lot(end_date);
