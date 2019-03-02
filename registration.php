@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'email',
         'password',
         'name',
-        'message'
+        'message',
     ];
 
     $dict = [
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Email
-    if(!empty($_POST['email']) && !filter_var($_POST['email'],FILTER_VALIDATE_EMAIL) ) {
+    if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Некорректный email';
     }
 
@@ -41,15 +41,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['email'] = 'Пользователь с таким email существует';
     }
 
-    // todo Добавить обработку изображения
+    if (isset($_FILES['avatar']) && !$_FILES['avatar']['error']) {
+        $tmp_name = $_FILES['avatar']['tmp_name'];
+        $file_mime = mime_content_type($tmp_name);
 
-    if(count($errors)) {
+
+        if ($file_mime !== "image/png" && $file_mime !== 'image/jpeg') {
+            $errors['avatar'] = 'Неверный тип изображения';
+        }
+
+        if ($file_mime === "image/jpeg") {
+            $img_ext = '.jpg';
+        } elseif ($file_mime === "image/png") {
+            $img_ext = '.png';
+        }
+    }
+
+    if (count($errors)) {
         $page_content = include_template('registration.php', [
             'errors' => $errors,
             'categories' => $categories,
             'new_user' => $new_user
         ]);
     } else {
+
+        if (isset($_FILES['avatar']) && !$_FILES['avatar']['error']) {
+            if (!is_dir($uploads)) {
+                mkdir($uploads, 0777, true);
+            }
+
+            $new_filename = uniqid('user_') . $img_ext;
+            $new_user['avatar'] = $uploads . $new_filename;
+
+            move_uploaded_file($tmp_name, $uploads . $new_filename);
+        } else {
+            $new_user['avatar'] = 'img/avatar.jpg';
+        }
+
         $added = insert_new_user($db_con, $new_user);
 
         if ($added) {
@@ -57,8 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
     }
-
-    var_dump($errors);
 } else {
     $page_content = include_template('registration.php', [
         'categories' => $categories

@@ -274,13 +274,18 @@ function insert_new_user($db_con, array $new_user)
 {
     $password = password_hash($new_user['password'], PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO user(name, email, passwd, contact) VALUES(?, ?, ?, ?)";
+    if($new_user['avatar']) {
+
+    }
+
+    $sql = "INSERT INTO user(name, email, passwd, contact, img) VALUES(?, ?, ?, ?, ?)";
 
     $stmt = db_get_prepare_stmt($db_con, $sql, [
         $new_user['name'],
         $new_user['email'],
         $password,
         $new_user['message'],
+        $new_user['avatar']
     ]);
 
     $result = mysqli_stmt_execute($stmt);

@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mkdir($uploads, 0777, true);
         }
 
-        $new_filename = uniqid('image_') . '.' . $img_ext;
+        $new_filename = uniqid('image_') . $img_ext;
         $new_lot['img_path'] = $uploads . $new_filename;
 
         move_uploaded_file($tmp_name, $uploads . $new_filename);

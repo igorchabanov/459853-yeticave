@@ -12,7 +12,7 @@
     $classname = isset($errors) ? 'form--invalid' : '';
 ?>
 
-<form class="form container <?= $classname; ?>" action="/registration.php" method="post"> <!-- form--invalid -->
+<form class="form container <?= $classname; ?>" action="/registration.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
     <h2>Регистрация нового аккаунта</h2>
 
     <?php
@@ -61,7 +61,13 @@
         <textarea id="message" name="message" placeholder="Напишите как с вами связаться"><?= $value; ?></textarea>
         <span class="form__error"><?= $error; ?></span>
     </div>
-    <div class="form__item form__item--file form__item--last">
+
+    <?php
+    $classname = isset($errors['avatar']) ? 'form__item--invalid' : '';
+    $error = isset($errors['avatar']) ? $errors['avatar'] : '';
+    ?>
+
+    <div class="form__item form__item--file form__item--last <?= $classname; ?>">
         <label>Аватар</label>
         <div class="preview">
             <button class="preview__remove" type="button">x</button>
@@ -70,10 +76,11 @@
             </div>
         </div>
         <div class="form__input-file">
-            <input class="visually-hidden" type="file" id="photo2" value="">
+            <input class="visually-hidden" type="file" id="photo2" name="avatar" value="">
             <label for="photo2">
                 <span>+ Добавить</span>
             </label>
+            <span class="form__error"><?= $error; ?></span>
         </div>
     </div>
     <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
