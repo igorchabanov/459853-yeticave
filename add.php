@@ -3,6 +3,11 @@ require_once('functions.php');
 require_once('config/db.php');
 require_once('config/config.php');
 
+if (!isset($_SESSION['user'])) {
+    http_response_code(403);
+    exit();
+}
+
 $categories = get_categories($db_con);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -78,6 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         move_uploaded_file($tmp_name, $uploads . $new_filename);
 
+        $new_lot['author'] = $_SESSION['user']['id'];
+
         //Insert
         $added = insert_lot($db_con, $new_lot);
 
@@ -94,14 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Empty page
     $add_page = include_template('add.php', [
         'categories' => $categories,
-    ]);
-}
-
-if (!isset($_SESSION['user'])) {
-    http_response_code(403);
-
-    $add_page = include_template('403.php', [
-        'categories' => $categories
     ]);
 }
 

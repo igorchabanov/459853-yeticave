@@ -199,7 +199,7 @@ function get_item_by_id($db_con, int $id)
 function insert_lot($db_con, $new_lot)
 {
     $sql = "INSERT INTO lot(title, description, cat_id, start_price, img_path, rate_step, author_id, winner_id, end_date) 
-            VALUES(?, ?, ?, ?, ?, ?, 7, 2, ?);";
+            VALUES(?, ?, ?, ?, ?, ?, ?, 2, ?);";
 
     $stmt = db_get_prepare_stmt($db_con, $sql, [
         $new_lot['lot-name'],
@@ -208,6 +208,7 @@ function insert_lot($db_con, $new_lot)
         $new_lot['lot-rate'],
         $new_lot['img_path'],
         $new_lot['lot-step'],
+        $new_lot['author'],
         $new_lot['lot-date']
     ]);
 

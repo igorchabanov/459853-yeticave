@@ -26,9 +26,9 @@
             <nav class="user-menu">
 
                 <!-- здесь должен быть PHP код для показа имени пользователя -->
-                <?php if (isset($_SESSION['user'])): ?>
+                <?php if ($is_auth): ?>
                     <div class="user-menu__logged">
-                        <p><?= strip_tags($_SESSION['user']['name']); ?></p>
+                        <p><?= $user_name; ?></p>
                         <a href="/logout.php">Выход</a>
                     </div>
                 <?php else: ?>

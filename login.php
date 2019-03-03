@@ -31,10 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['email'] = 'Некорректный email';
     } elseif (!empty($_POST['email']) && !check_user_email($db_con, $_POST['email'])) {
         $errors['email'] = 'Пользователь с таким email не существует';
-    }
-
-    // user exsist
-    if (!empty($_POST['email']) && !empty($_POST['password']) && check_user_email($db_con, $_POST['email'])) {
+    } else {
+        // user exsist
         $user_db = get_user($db_con, $_POST['email']);
 
         if (password_verify($_POST['password'], $user_db['passwd'])) {
@@ -52,10 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'errors' => $errors,
             'categories' => $categories,
             'user' => $user
-        ]);
-    } else {
-        $page_content = include_template('login.php', [
-            'categories' => $categories
         ]);
     }
 
