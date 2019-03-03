@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $is_auth = rand(0, 1);
 $username = 'Игорь';
 $uploads = 'uploads/';

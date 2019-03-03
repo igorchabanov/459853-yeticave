@@ -236,7 +236,7 @@ function check_date_format($date)
 }
 
 /**
- *  Проверяет на существование email в БД
+ *  Проверяет на существование пользователя в БД по email
  *
  * @param object $db_con
  * @param string $email
@@ -267,7 +267,6 @@ function check_user_email($db_con, string $email)
  *
  * @param $db_con
  * @param array $new_user
- * @return bool
  */
 
 function insert_new_user($db_con, array $new_user)
@@ -289,4 +288,30 @@ function insert_new_user($db_con, array $new_user)
     if (!$result) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
+}
+
+/**
+ * Получает данные пользователя
+ *
+ * @param object $db_con
+ * @param string $email
+ * @return array|null
+ */
+
+function get_user($db_con, string $email)
+{
+
+    $email = mysqli_real_escape_string($db_con, $email);
+
+    $sql = "SELECT * FROM user WHERE email = '$email'";
+    $query = mysqli_query($db_con, $sql);
+
+
+    if ($query) {
+        $result = mysqli_fetch_assoc($query);
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return $result;
 }

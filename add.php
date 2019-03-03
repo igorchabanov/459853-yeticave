@@ -97,6 +97,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 }
 
+if (!isset($_SESSION['user'])) {
+    http_response_code(403);
+
+    $add_page = include_template('403.php', [
+        'categories' => $categories
+    ]);
+}
+
 $layout_content = include_template('layout.php', [
     'page_content' => $add_page,
     'meta_title' => 'Добавление лота',

@@ -43,7 +43,6 @@ if (isset($_GET['id'])) {
         ]);
     }
 
-
 } else {
     http_response_code(404);
 
