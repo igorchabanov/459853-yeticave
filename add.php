@@ -43,9 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // Загрузка img
-    if (isset($_FILES['lot-img']) && !empty($_FILES['lot-img']['name'])) {
+    if (isset($_FILES['lot-img']) && !$_FILES['lot-img']['error']) {
         $tmp_name = $_FILES['lot-img']['tmp_name'];
-        $file_name = $_FILES['lot-img']['name'];
         $file_mime = mime_content_type($tmp_name);
 
 
@@ -74,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mkdir($uploads, 0777, true);
         }
 
-        $new_filename = uniqid('image_') . '.' . $img_ext;
+        $new_filename = uniqid('image_') . $img_ext;
         $new_lot['img_path'] = $uploads . $new_filename;
 
         move_uploaded_file($tmp_name, $uploads . $new_filename);
