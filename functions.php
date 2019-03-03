@@ -289,6 +289,4 @@ function insert_new_user($db_con, array $new_user)
     if (!$result) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
-
-    return $result;
 }
