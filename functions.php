@@ -274,10 +274,6 @@ function insert_new_user($db_con, array $new_user)
 {
     $password = password_hash($new_user['password'], PASSWORD_DEFAULT);
 
-    if($new_user['avatar']) {
-
-    }
-
     $sql = "INSERT INTO user(name, email, passwd, contact, img) VALUES(?, ?, ?, ?, ?)";
 
     $stmt = db_get_prepare_stmt($db_con, $sql, [

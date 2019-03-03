@@ -23,7 +23,7 @@
 
     <div class="form__item <?= $classname; ?>"> <!-- form__item--invalid -->
         <label for="email">E-mail*</label>
-        <input id="email" type="text" name="email" value="<?= $value; ?>" placeholder="Введите e-mail">
+        <input id="email" type="text" name="email" value="<?= htmlspecialchars($value); ?>" placeholder="Введите e-mail">
         <span class="form__error"><?= $error ?></span>
     </div>
 
@@ -46,7 +46,7 @@
 
     <div class="form__item <?= $classname; ?>">
         <label for="name">Имя*</label>
-        <input id="name" type="text" name="name" value="<?= $value; ?>" placeholder="Введите имя">
+        <input id="name" type="text" name="name" value="<?= htmlspecialchars($value); ?>" placeholder="Введите имя">
         <span class="form__error"><?= $error; ?></span>
     </div>
 
@@ -58,7 +58,7 @@
 
     <div class="form__item <?= $classname; ?>">
         <label for="message">Контактные данные*</label>
-        <textarea id="message" name="message" placeholder="Напишите как с вами связаться"><?= $value; ?></textarea>
+        <textarea id="message" name="message" placeholder="Напишите как с вами связаться"><?= htmlspecialchars($value); ?></textarea>
         <span class="form__error"><?= $error; ?></span>
     </div>
 

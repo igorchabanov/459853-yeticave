@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // uniq email
-    if (check_user_email($db_con, $_POST['email'])) {
+    if (!empty($_POST['email']) && check_user_email($db_con, $_POST['email'])) {
         $errors['email'] = 'Пользователь с таким email существует';
     }
 
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             move_uploaded_file($tmp_name, $uploads . $new_filename);
         } else {
-            $new_user['avatar'] = 'img/avatar.jpg';
+            $new_user['avatar'] = '';
         }
 
         $added = insert_new_user($db_con, $new_user);
