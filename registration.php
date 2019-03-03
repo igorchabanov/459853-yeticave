@@ -78,12 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $new_user['avatar'] = '';
         }
 
-        $added = insert_new_user($db_con, $new_user);
+        insert_new_user($db_con, $new_user);
 
-        if ($added) {
-            header("Location: /login.php");
-            exit();
-        }
+        header("Location: /login.php");
+        exit();
     }
 } else {
     $page_content = include_template('registration.php', [
