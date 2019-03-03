@@ -15,6 +15,7 @@ if (isset($_GET['id'])) {
         $content = include_template('lot.php', [
             'categories' => $categories,
             'lot' => $item,
+            'is_auth' => $is_auth
         ]);
 
         $layout_content = include_template('layout.php', [
