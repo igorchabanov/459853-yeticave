@@ -192,14 +192,12 @@ function get_item_by_id($db_con, int $id)
  *
  * @param object $db_con -- ресурс соединения
  * @param array $new_lot -- массив с новым товаром
- *
- * @return bool $res;
  */
 
 function insert_lot($db_con, $new_lot)
 {
     $sql = "INSERT INTO lot(title, description, cat_id, start_price, img_path, rate_step, author_id, winner_id, end_date) 
-            VALUES(?, ?, ?, ?, ?, ?, 7, 2, ?);";
+            VALUES(?, ?, ?, ?, ?, ?, ?, 2, ?);";
 
     $stmt = db_get_prepare_stmt($db_con, $sql, [
         $new_lot['lot-name'],
@@ -208,6 +206,7 @@ function insert_lot($db_con, $new_lot)
         $new_lot['lot-rate'],
         $new_lot['img_path'],
         $new_lot['lot-step'],
+        $new_lot['author'],
         $new_lot['lot-date']
     ]);
 
@@ -216,8 +215,6 @@ function insert_lot($db_con, $new_lot)
     if (!$result) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
-
-    return $result;
 }
 
 /**
@@ -236,7 +233,7 @@ function check_date_format($date)
 }
 
 /**
- *  Проверяет на существование email в БД
+ *  Проверяет на существование пользователя в БД по email
  *
  * @param object $db_con
  * @param string $email
@@ -267,7 +264,6 @@ function check_user_email($db_con, string $email)
  *
  * @param $db_con
  * @param array $new_user
- * @return bool
  */
 
 function insert_new_user($db_con, array $new_user)
@@ -287,6 +283,30 @@ function insert_new_user($db_con, array $new_user)
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+}
+
+/**
+ * Получает данные пользователя
+ *
+ * @param object $db_con
+ * @param string $email
+ * @return array|null
+ */
+
+function get_user($db_con, string $email)
+{
+
+    $email = mysqli_real_escape_string($db_con, $email);
+
+    $sql = "SELECT * FROM user WHERE email = '$email'";
+    $query = mysqli_query($db_con, $sql);
+
+
+    if ($query) {
+        $result = mysqli_fetch_assoc($query);
+    } else {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
 

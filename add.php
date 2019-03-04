@@ -3,7 +3,16 @@ require_once('functions.php');
 require_once('config/db.php');
 require_once('config/config.php');
 
+if (!isset($_SESSION['user'])) {
+    http_response_code(403);
+    exit();
+}
+
 $categories = get_categories($db_con);
+
+$new_lot = [];
+$errors = [];
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_lot = $_POST;
@@ -21,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $numbers = ['lot-rate', 'lot-step'];
 
-    $errors = [];
+//    $errors = [];
 
     foreach ($required as $field) {
-        if (empty($_POST[$field]) || $_POST[$field] === '') {
+        if (empty($_POST[$field])) {
             $errors[$field] = $dict[$field];
         }
     }
@@ -35,24 +44,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (empty($_POST['lot-date']) || !check_date_format($_POST['lot-date'])) {
-        $errors['lot-date'] = 'Некорректный формат даты';
-    } elseif (strtotime($_POST['lot-date']) < strtotime('tomorrow')) {
-        $errors['lot-date'] = 'Дата окончания должна быть позже на 1 день';
+    if (!empty($_POST['lot-date'])) {
+        if (!check_date_format($_POST['lot-date'])) {
+            $errors['lot-date'] = 'Некорректный формат даты';
+        } elseif (strtotime($_POST['lot-date']) < strtotime('tomorrow')) {
+            $errors['lot-date'] = 'Дата окончания должна быть позже на 1 день';
+        }
     }
-
 
     // Загрузка img
     if (isset($_FILES['lot-img']) && !$_FILES['lot-img']['error']) {
         $tmp_name = $_FILES['lot-img']['tmp_name'];
         $file_mime = mime_content_type($tmp_name);
 
-
         if ($file_mime !== "image/png" && $file_mime !== 'image/jpeg') {
             $errors['file'] = $dict['file'];
         }
 
-        if ($file_mime === "image/jpeg") {
+        if ($file_mime === "image/jpeg" || $file_mime === "image/jpg") {
             $img_ext = '.jpg';
         } elseif ($file_mime === "image/png") {
             $img_ext = '.png';
@@ -61,14 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['file'] = $dict['file'];
     }
 
+    if (!count($errors)) {
 
-    if (count($errors)) {
-        $add_page = include_template('add.php', [
-            'errors' => $errors,
-            'categories' => $categories,
-            'new_lot' => $new_lot
-        ]);
-    } else {
         if (!is_dir($uploads)) {
             mkdir($uploads, 0777, true);
         }
@@ -78,24 +81,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         move_uploaded_file($tmp_name, $uploads . $new_filename);
 
+        $new_lot['author'] = $_SESSION['user']['id'];
+
         //Insert
-        $added = insert_lot($db_con, $new_lot);
+        insert_lot($db_con, $new_lot);
 
-        if ($added) {
-            $lot_id = mysqli_insert_id($db_con);
+        $lot_id = mysqli_insert_id($db_con);
 
-            header("Location: /lot.php?id=" . $lot_id);
-            die();
-        }
+        header("Location: /lot.php?id=" . $lot_id);
+        die();
     }
-
-
-} else {
-    // Empty page
-    $add_page = include_template('add.php', [
-        'categories' => $categories,
-    ]);
 }
+
+$add_page = include_template('add.php', [
+    'categories' => $categories,
+    'errors' => $errors,
+    'new_lot' => $new_lot
+]);
 
 $layout_content = include_template('layout.php', [
     'page_content' => $add_page,
