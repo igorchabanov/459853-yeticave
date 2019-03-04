@@ -9,7 +9,7 @@
 </nav>
 
 <?php
-$classname = isset($errors) ? 'form--invalid' : '';
+$classname = count($errors) ? 'form--invalid' : '';
 ?>
 
 <form class="form container <?= $classname; ?>" action="/login.php" method="post"> <!-- form--invalid -->

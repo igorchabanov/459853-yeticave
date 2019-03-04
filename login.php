@@ -5,6 +5,9 @@ require_once('config/config.php');
 
 $categories = get_categories($db_con);
 
+$errors = [];
+$user = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $_POST;
 
@@ -18,46 +21,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'password' => 'Введите пароль'
     ];
 
-    $errors = [];
+    $email_exsist = false;
 
-    foreach ($required as $field) {
-        if (empty($_POST[$field]) || $_POST[$field] === '') {
-            $errors[$field] = $dict[$field];
-        }
-    }
+    if (!empty($_POST['email'])) {
+        if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 
-    // check email
-    if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Некорректный email';
-    } elseif (!empty($_POST['email']) && !check_user_email($db_con, $_POST['email'])) {
-        $errors['email'] = 'Пользователь с таким email не существует';
-    } else {
-        // user exsist
-        $user_db = get_user($db_con, $_POST['email']);
+            if (check_user_email($db_con, $_POST['email'])) {
 
-        if (password_verify($_POST['password'], $user_db['passwd'])) {
-            $_SESSION['user'] = $user_db;
-            header('Location: /');
-            exit();
+                $email_exsist = true;
 
+            } else {
+                $errors['email'] = 'Пользователь с таким email не существует';
+            }
         } else {
-            $errors['password'] = 'Вы ввели неверный пароль';
+            $errors['email'] = 'Некорректный email';
         }
+    } else {
+        $errors['email'] = 'Пустое поле';
     }
 
-    if (count($errors)) {
-        $page_content = include_template('login.php', [
-            'errors' => $errors,
-            'categories' => $categories,
-            'user' => $user
-        ]);
-    }
+    if (!empty($_POST['password'])) {
+        if ($email_exsist) {
 
-} else {
-    $page_content = include_template('login.php', [
-        'categories' => $categories
-    ]);
+            $user_db = get_user($db_con, $_POST['email']);
+
+            if (password_verify($_POST['password'], $user_db['passwd'])) {
+                $_SESSION['user'] = $user_db;
+                header('Location: /');
+                exit();
+            } else {
+                $errors['password'] = 'Неверный пароль';
+            }
+        }
+    } else {
+        $errors['password'] = 'ПУстой пароль';
+    }
 }
+
+$page_content = include_template('login.php', [
+    'errors' => $errors,
+    'categories' => $categories,
+    'user' => $user
+]);
 
 $layout_content = include_template('layout.php', [
     'categories' => $categories,

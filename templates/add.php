@@ -9,7 +9,7 @@
 </nav>
 
 <?php
-$classname = isset($errors) ? 'form--invalid' : '';
+$classname = count($errors) ? 'form--invalid' : '';
 ?>
 
 <form class="form form--add-lot container <?= $classname ?>" action="add.php" method="post"

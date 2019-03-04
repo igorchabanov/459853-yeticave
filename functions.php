@@ -192,8 +192,6 @@ function get_item_by_id($db_con, int $id)
  *
  * @param object $db_con -- ресурс соединения
  * @param array $new_lot -- массив с новым товаром
- *
- * @return bool $res;
  */
 
 function insert_lot($db_con, $new_lot)
@@ -217,8 +215,6 @@ function insert_lot($db_con, $new_lot)
     if (!$result) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
-
-    return $result;
 }
 
 /**
