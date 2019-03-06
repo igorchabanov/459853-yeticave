@@ -30,8 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $numbers = ['lot-rate', 'lot-step'];
 
-//    $errors = [];
-
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
             $errors[$field] = $dict[$field];

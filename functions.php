@@ -312,3 +312,50 @@ function get_user($db_con, string $email)
 
     return $result;
 }
+
+/**
+ * Получает ставки лота по id
+ *
+ * @param $db_con
+ * @param int $lot_id
+ *
+ * @return array $result
+ */
+
+function get_lot_rates($db_con, int $lot_id) {
+    $sql = "SELECT r.id, r.created, r.amount, u.name
+            FROM rate r
+            JOIN user u
+            WHERE lot_id = '$lot_id' && r.user_id = u.id
+            ORDER BY created DESC LIMIT 10";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if ($query) {
+        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return $result;
+}
+
+function insert_new_rate($db_con, $user, $rate, $lot_id) {
+    $user = intval($user);
+    $rate = intval($rate);
+    $lot_id = intval($lot_id);
+
+    $sql = "INSERT INTO rate(amount, user_id, lot_id) VALUES(?, ?, ?)";
+
+    $stmt = db_get_prepare_stmt($db_con, $sql, [
+        $rate,
+        $user,
+        $lot_id
+    ]);
+
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+}
