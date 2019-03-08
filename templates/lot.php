@@ -20,7 +20,7 @@
             </p>
         </div>
         <div class="lot-item__right">
-            <?php if ($is_auth) : ?>
+            <?php if ($is_auth && !$exsist_rate && !$author_lot) : ?>
                 <div class="lot-item__state">
                     <div class="lot-item__timer timer">
                         10:54
@@ -36,14 +36,15 @@
                     </div>
 
                     <?php
-                    $classname = count($errors) ? 'form__item--invalid' : '';
+                    $classname = isset($errors['cost']) ? 'form__item--invalid' : '';
+                    $error = isset($errors['cost']) ? $errors['cost'] : '';
                     ?>
                     <form class="lot-item__form" action="/lot.php?id=<?= $lot['id'] ?>" method="post">
                         <p class="lot-item__form-item form__item <?= $classname; ?>">
                             <label for="cost">Ваша ставка</label>
                             <input id="cost" type="text" name="cost"
                                    placeholder="<?= $lot['next_rate']; ?>">
-                            <span class="form__error"></span>
+                            <span class="form__error"><?= $error; ?></span>
                         </p>
                         <button type="submit" class="button">Сделать ставку</button>
                     </form>
@@ -51,18 +52,18 @@
             <?php endif; ?>
 
             <div class="history">
-                <?php if($rates): ?>
+                <?php if ($rates): ?>
 
-                <h3>История ставок (<span><?= count($rates); ?></span>)</h3>
-                <table class="history__list">
-                    <?php foreach($rates as $rate): ?>
-                    <tr class="history__item">
-                        <td class="history__name"><?= htmlspecialchars($rate['name']); ?></td>
-                        <td class="history__price"><?= $rate['amount']; ?> р</td>
-                        <td class="history__time"><?= $rate['created']; ?> <br> 5 минут назад</td>
-                    </tr>
-                    <?php endforeach; ?>
-                </table>
+                    <h3>История ставок (<span><?= count($rates); ?></span>)</h3>
+                    <table class="history__list">
+                        <?php foreach ($rates as $rate): ?>
+                            <tr class="history__item">
+                                <td class="history__name"><?= htmlspecialchars($rate['name']); ?></td>
+                                <td class="history__price"><?= $rate['amount']; ?> р</td>
+                                <td class="history__time"><?= history_time($rate['created']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
 
                 <?php endif; ?>
             </div>

@@ -8,46 +8,62 @@ $errors = [];
 $item_id = $_GET['id'] ? intval($_GET['id']) : '';
 $item = [];
 $rates = [];
+$user_id = '';
+$exsist_rate = false;
+$author_lot = false;
 
-if ($item_id) {
+// User id
+if (!empty($_SESSION['user'])) {
+    $user_id = $_SESSION['user']['id'];
+}
+
+// Item id
+if (!empty($item_id)) {
     $item = get_item_by_id($db_con, $item_id);
-
     $rates = get_lot_rates($db_con, $item_id);
-
     $item['next_rate'] = $item['price'] + $item['rate_step'];
 }
 
-//var_dump($rates);
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!empty($_POST['cost'])) {
-
-        // todo проверка на то что пользователь еще не делал ставку
-
-        if ($_POST['cost'] >= $item['next_rate']) {
-            insert_new_rate($db_con, $_SESSION['user']['id'], $_POST['cost'], $item['id']);
-
-            header("Location: /lot.php?id=" . $lot_id);
-            exit();
-        } else {
-            $errors['cost'] = 'Сумма должна быть больше';
+if (!empty($rates)) {
+    foreach ($rates as $rate) {
+        if ($rate['user_id'] === $user_id) {
+            $exsist_rate = true;
         }
-
-    } else {
-        $errors['cost'] = 'Введите Вашу ставку';
     }
 }
 
-var_dump($errors);
+if ($item['author_id'] === $user_id) {
+    $author_lot = true;
+}
 
-if ($item) {
+if ($is_auth) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!empty($_POST['cost'])) {
+
+            if ($_POST['cost'] >= $item['next_rate']) {
+                insert_new_rate($db_con, $_SESSION['user']['id'], $_POST['cost'], $item['id']);
+
+                header("Location: /lot.php?id=" . $item_id);
+                exit();
+            } else {
+                $errors['cost'] = 'Сумма должна быть больше';
+            }
+
+        } else {
+            $errors['cost'] = 'Введите Вашу ставку';
+        }
+    }
+}
+
+if (!empty($item) || !empty($item_id)) {
     $content = include_template('lot.php', [
         'errors' => $errors,
         'categories' => $categories,
         'lot' => $item,
         'rates' => $rates,
-        'is_auth' => $is_auth
+        'is_auth' => $is_auth,
+        'exsist_rate' => $exsist_rate,
+        'author_lot' => $author_lot
     ]);
 } else {
     http_response_code(404);
