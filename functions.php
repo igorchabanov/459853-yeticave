@@ -371,24 +371,81 @@ function insert_new_rate($db_con, $user, $rate, $lot_id)
     }
 }
 
+
 /**
  * Приводит дату к читаемому виду в истории
  *
  * @param $date
- * @return false|string
+ * @return string
  */
 function history_time($date)
 {
+    $arr_hours = [
+        'час',
+        'часа',
+        'часов'
+    ];
+
+    $arr_minutes = [
+        'минуту',
+        'минуты',
+        'минут'
+    ];
+
     $time = time() - strtotime($date);
 
-    if ($time > 60 && $time < 3600) {
-        $ago = floor(($time % 3600) / 60) . ' минут назад';
-    } elseif ($time > 3600 && $time < 86400) {
-        $ago = floor($time / 3600) . ' часов назад';
-    } elseif ($time > 86400) {
-        $ago = date('d.m.Y в H:i', strtotime($date));
-    } else {
-        $ago = 'меньше минуты назад';
+    $result = date('d.m.Y в H:i', strtotime($date));
+
+    $hours = (int)floor(($time % 86400) / 3600);
+    $minutes = (int)floor(($time % 3600) / 60);
+    $days = (int)floor(($time / 86400));
+
+    if ($days === 0) {
+        if ($hours === 0 && $minutes === 0) {
+            $result = $minutes < 1 ? 'Меньше минуты' : '';
+        } else {
+            if ($hours === 0) {
+                $result = $minutes >= 1 ? $minutes . ' ' . get_num_ending($minutes, $arr_minutes) : '';
+            } else {
+                $result = $hours > 1 ? $hours . ' ' . get_num_ending($hours, $arr_hours) : '';
+            }
+        }
+        $result .= ' назад';
     }
-    return $ago;
+
+    return $result;
 }
+
+/**
+ * Приводит склонения к правильному виду
+ *
+ * @param int $number
+ * @param array $ending_array
+ * @return mixed
+ */
+function get_num_ending(int $number, array $ending_array)
+{
+    $number = $number % 100;
+    if ($number >= 11 && $number <= 19) {
+        $ending = $ending_array[2];
+    } else {
+        $number = $number % 10;
+        switch ($number) {
+            case(1):
+                $ending = $ending_array[0];
+                break;
+            case(2):
+            case(3):
+            case(4):
+                $ending = $ending_array[1];
+                break;
+            default:
+                $ending = $ending_array[2];
+        }
+    }
+
+    return $ending;
+}
+
+
+
