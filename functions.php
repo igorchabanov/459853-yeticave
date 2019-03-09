@@ -166,7 +166,7 @@ function get_adverts($db_con)
 
 function get_item_by_id($db_con, int $id)
 {
-    $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, c.title AS cat,
+    $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, l.author_id, c.title AS cat,
                 (SELECT  COALESCE( MAX(r.amount), l.start_price )
                 FROM lot l
                 JOIN rate r ON r.lot_id = l.id
@@ -312,3 +312,140 @@ function get_user($db_con, string $email)
 
     return $result;
 }
+
+/**
+ * Получает ставки лота по id
+ *
+ * @param $db_con
+ * @param int $lot_id
+ *
+ * @return array $result
+ */
+
+function get_lot_rates($db_con, int $lot_id)
+{
+    $sql = "SELECT r.id, r.created, r.amount, r.user_id, u.name
+            FROM rate r
+            JOIN user u
+            WHERE lot_id = '$lot_id' && r.user_id = u.id
+            ORDER BY created DESC LIMIT 10";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if ($query) {
+        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return $result;
+}
+
+/**
+ * Добавляет запись в ставки
+ *
+ * @param $db_con
+ * @param $user
+ * @param $rate
+ * @param $lot_id
+ */
+
+function insert_new_rate($db_con, $user, $rate, $lot_id)
+{
+    $user = intval($user);
+    $rate = intval($rate);
+    $lot_id = intval($lot_id);
+
+    $sql = "INSERT INTO rate(amount, user_id, lot_id) VALUES(?, ?, ?)";
+
+    $stmt = db_get_prepare_stmt($db_con, $sql, [
+        $rate,
+        $user,
+        $lot_id
+    ]);
+
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+}
+
+
+/**
+ * Приводит дату к читаемому виду в истории
+ *
+ * @param $date
+ * @return string
+ */
+function history_time($date)
+{
+    $arr_hours = [
+        'час',
+        'часа',
+        'часов'
+    ];
+
+    $arr_minutes = [
+        'минуту',
+        'минуты',
+        'минут'
+    ];
+
+    $time = time() - strtotime($date);
+
+    $result = date('d.m.Y в H:i', strtotime($date));
+
+    $hours = (int)floor(($time % 86400) / 3600);
+    $minutes = (int)floor(($time % 3600) / 60);
+    $days = (int)floor(($time / 86400));
+
+    if ($days === 0) {
+        if ($hours === 0 && $minutes === 0) {
+            $result = $minutes < 1 ? 'Меньше минуты' : '';
+        } else {
+            if ($hours === 0) {
+                $result = $minutes >= 1 ? $minutes . ' ' . get_num_ending($minutes, $arr_minutes) : '';
+            } else {
+                $result = $hours > 1 ? $hours . ' ' . get_num_ending($hours, $arr_hours) : '';
+            }
+        }
+        $result .= ' назад';
+    }
+
+    return $result;
+}
+
+/**
+ * Приводит склонения к правильному виду
+ *
+ * @param int $number
+ * @param array $ending_array
+ * @return mixed
+ */
+function get_num_ending(int $number, array $ending_array)
+{
+    $number = $number % 100;
+    if ($number >= 11 && $number <= 19) {
+        $ending = $ending_array[2];
+    } else {
+        $number = $number % 10;
+        switch ($number) {
+            case(1):
+                $ending = $ending_array[0];
+                break;
+            case(2):
+            case(3):
+            case(4):
+                $ending = $ending_array[1];
+                break;
+            default:
+                $ending = $ending_array[2];
+        }
+    }
+
+    return $ending;
+}
+
+
+
