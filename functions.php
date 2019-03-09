@@ -45,39 +45,15 @@ function format_price($arg)
 }
 
 /**
- * Форматирование цены 2 способ
- *
- * @param int $argument
- *
- * @return string
- */
-
-function format_price_string($argument)
-{
-    $price = (string)ceil($argument);
-    $result = $price;
-
-    if ($price >= 1000) {
-        $last_numbers = substr($price, -3);
-        $count_diff = strlen($price) - strlen($last_numbers);
-        $first_numbers = substr($price, 0, $count_diff);
-
-        $result = $first_numbers . ' ' . $last_numbers;
-    }
-
-    $result .= ' <b class="rub">р</b>';
-    return $result;
-}
-
-/**
  * Расчет времени до конца ставки
  *
- * @return string
+ * @param $end_date
+ * @return DateInterval
  */
-function lot_time_end()
+function lot_time_end($end_date)
 {
     $current_date = date_create('now');
-    $new_day = date_create('tomorrow 00:00:00');
+    $new_day = date_create($end_date);
 
     $diff = date_diff($current_date, $new_day);
 
@@ -447,5 +423,61 @@ function get_num_ending(int $number, array $ending_array)
     return $ending;
 }
 
+/**
+ * Получает кол-во записей по поиску
+ *
+ * @param $db_con
+ * @param string $phrase
+ * @return int $result
+ */
+function get_count_items($db_con, string $phrase)
+{
+    $sql = "SELECT COUNT(*) AS total FROM lot WHERE MATCH (title, description) AGAINST ('$phrase')";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if ($query) {
+        $result = mysqli_fetch_assoc($query)['total'];
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return (int)$result;
+}
+
+/**
+ * Получает искомые лоты
+ *
+ * @param $db_con
+ * @param string $phrase
+ * @param int $limit
+ * @param int $offset
+ * @return array|null
+ */
+function get_search_result($db_con, string $phrase, int $limit, int $offset)
+{
+
+    $sql = "SELECT l.id, l.title, l.description, l.img_path, l.end_date, c.title AS cat_name,
+              (SELECT COALESCE( MAX(r.amount), lot.start_price)
+              FROM lot
+              LEFT JOIN rate r ON lot.id = r.lot_id
+              WHERE lot.id = l.id
+              ) AS price
+            FROM lot l
+            JOIN category c ON l.cat_id = c.id
+            WHERE MATCH (l.title, l.description) AGAINST ('$phrase')
+            ORDER BY l.created DESC LIMIT $limit
+            OFFSET $offset";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if ($query) {
+        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return $result;
+}
 
 
