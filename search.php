@@ -27,7 +27,6 @@ if (empty($search_phrase)) {
 
     $search_result = get_search_result($db_con, $search_phrase, $page_items, $offset);
 
-
     $content = include_template('search.php', [
         'items' => $search_result,
         'search_phrase' => $search_phrase,
