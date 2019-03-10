@@ -48,7 +48,7 @@ function format_price($arg)
  * Расчет времени до конца ставки
  *
  * @param $end_date
- * @return DateInterval
+ * @return string
  */
 function lot_time_end($end_date)
 {
@@ -432,6 +432,8 @@ function get_num_ending(int $number, array $ending_array)
  */
 function get_count_items($db_con, string $phrase)
 {
+    $phrase = trim(strip_tags($phrase));
+
     $sql = "SELECT COUNT(*) AS total FROM lot WHERE MATCH (title, description) AGAINST ('$phrase')";
 
     $query = mysqli_query($db_con, $sql);
@@ -456,6 +458,7 @@ function get_count_items($db_con, string $phrase)
  */
 function get_search_result($db_con, string $phrase, int $limit, int $offset)
 {
+    $phrase = trim(strip_tags($phrase));
 
     $sql = "SELECT l.id, l.title, l.description, l.img_path, l.end_date, c.title AS cat_name,
               (SELECT COALESCE( MAX(r.amount), lot.start_price)
