@@ -8,6 +8,8 @@
         <?php endforeach; ?>
     </ul>
 </nav>
-<section class="lot-item container">
-    <h2><?= $message ?></h2>
-</section>
+<div class="container">
+    <section class="lots">
+        <h2><?= $message ?></h2>
+    </section>
+</div>
