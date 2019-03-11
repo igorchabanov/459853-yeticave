@@ -28,7 +28,7 @@
                 <!-- здесь должен быть PHP код для показа имени пользователя -->
                 <?php if ($is_auth): ?>
                     <div class="user-menu__logged">
-                        <p><?= $user_name['name']; ?></p>
+                        <p><?= htmlspecialchars($user_name['name']); ?></p>
                         <a href="/logout.php">Выход</a>
                     </div>
                     <div>

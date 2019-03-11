@@ -138,7 +138,7 @@ function get_adverts($db_con)
 
 function get_item_by_id($db_con, int $id)
 {
-    $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, l.author_id, c.title AS cat,
+    $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, l.author_id, l.end_date, c.title AS cat,
                 (SELECT  COALESCE( MAX(r.amount), l.start_price )
                 FROM lot l
                 JOIN rate r ON r.lot_id = l.id

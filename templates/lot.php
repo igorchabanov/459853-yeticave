@@ -23,7 +23,7 @@
 
                 <div class="lot-item__state">
                     <div class="lot-item__timer timer">
-                        10:54
+                        <?= lot_time_end($lot['end_date']); ?>
                     </div>
                     <div class="lot-item__cost-state">
                         <div class="lot-item__rate">
