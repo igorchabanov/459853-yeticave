@@ -28,8 +28,11 @@
                 <!-- здесь должен быть PHP код для показа имени пользователя -->
                 <?php if ($is_auth): ?>
                     <div class="user-menu__logged">
-                        <p><?= $user_name; ?></p>
+                        <p><?= htmlspecialchars($user_name['name']); ?></p>
                         <a href="/logout.php">Выход</a>
+                    </div>
+                    <div>
+                        <img src="<?= $user_name['avatar']; ?>" width="50" height="50" alt="">
                     </div>
                 <?php else: ?>
                     <ul class="user-menu__list">

@@ -96,13 +96,11 @@ function get_categories($db_con)
     $sql = 'SELECT `id`, `title` FROM category';
     $query = mysqli_query($db_con, $sql);
 
-    if ($query) {
-        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
-    } else {
+    if (!$query) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
-    return $result;
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);
 }
 
 /**
@@ -122,13 +120,11 @@ function get_adverts($db_con)
 
     $query = mysqli_query($db_con, $sql);
 
-    if ($query) {
-        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
-    } else {
+    if (!$query) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
-    return $result;
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);
 }
 
 /**
@@ -142,7 +138,7 @@ function get_adverts($db_con)
 
 function get_item_by_id($db_con, int $id)
 {
-    $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, l.author_id, c.title AS cat,
+    $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, l.author_id, l.end_date, c.title AS cat,
                 (SELECT  COALESCE( MAX(r.amount), l.start_price )
                 FROM lot l
                 JOIN rate r ON r.lot_id = l.id
@@ -154,13 +150,11 @@ function get_item_by_id($db_con, int $id)
 
     $query = mysqli_query($db_con, $sql);
 
-    if ($query) {
-        $result = mysqli_fetch_assoc($query);
-    } else {
+    if (!$query) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
-    return $result;
+    return mysqli_fetch_assoc($query);;
 }
 
 /**
@@ -227,9 +221,9 @@ function check_user_email($db_con, string $email)
     if ($query) {
         if (mysqli_num_rows($query) > 0) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     } else {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
@@ -280,13 +274,11 @@ function get_user($db_con, string $email)
     $query = mysqli_query($db_con, $sql);
 
 
-    if ($query) {
-        $result = mysqli_fetch_assoc($query);
-    } else {
+    if (!$query) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
-    return $result;
+    return mysqli_fetch_assoc($query);;
 }
 
 /**
@@ -308,13 +300,11 @@ function get_lot_rates($db_con, int $lot_id)
 
     $query = mysqli_query($db_con, $sql);
 
-    if ($query) {
-        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
-    } else {
+    if (!$query) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
-    return $result;
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);;
 }
 
 /**
@@ -438,11 +428,11 @@ function get_count_items($db_con, string $phrase)
 
     $query = mysqli_query($db_con, $sql);
 
-    if ($query) {
-        $result = mysqli_fetch_assoc($query)['total'];
-    } else {
+    if (!$query) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
+
+    $result = mysqli_fetch_assoc($query)['total'];
 
     return (int)$result;
 }
@@ -475,13 +465,11 @@ function get_search_result($db_con, string $phrase, int $limit, int $offset)
 
     $query = mysqli_query($db_con, $sql);
 
-    if ($query) {
-        $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
-    } else {
+    if (!$query) {
         die('Произошла ошибка ' . mysqli_error($db_con));
     }
 
-    return $result;
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);
 }
 
 

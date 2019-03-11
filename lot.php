@@ -6,7 +6,7 @@ require_once('config/config.php');
 $categories = get_categories($db_con);
 
 $errors = [];
-$item_id = $_GET['id'] ? intval($_GET['id']) : '';
+$item_id = isset($_GET['id']) ? intval($_GET['id']) : '';
 $exsist_rate = false;
 $author_lot = false;
 

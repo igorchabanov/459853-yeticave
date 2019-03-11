@@ -20,10 +20,10 @@
             </p>
         </div>
         <div class="lot-item__right">
-            <?php if ($is_auth && !$exsist_rate && !$author_lot) : ?>
+
                 <div class="lot-item__state">
                     <div class="lot-item__timer timer">
-                        10:54
+                        <?= lot_time_end($lot['end_date']); ?>
                     </div>
                     <div class="lot-item__cost-state">
                         <div class="lot-item__rate">
@@ -34,7 +34,7 @@
                             Мин. ставка <span><?= $lot['next_rate']; ?></span>
                         </div>
                     </div>
-
+                    <?php if ($is_auth && !$exsist_rate && !$author_lot) : ?>
                     <?php
                     $classname = isset($errors['cost']) ? 'form__item--invalid' : '';
                     $error = isset($errors['cost']) ? $errors['cost'] : '';
@@ -48,8 +48,9 @@
                         </p>
                         <button type="submit" class="button">Сделать ставку</button>
                     </form>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
+
 
             <div class="history">
                 <?php if ($rates): ?>
