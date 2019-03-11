@@ -2,7 +2,8 @@
 session_start();
 
 $is_auth = isset($_SESSION['user']);
-$username = isset($_SESSION['user']) ? $_SESSION['user']['name'] : '';
+$username['name'] = isset($_SESSION['user']) ? $_SESSION['user']['name'] : '';
+$username['avatar'] = isset($_SESSION['user']) ? $_SESSION['user']['img'] : '';
 $user_id = isset($_SESSION['user']) ? $_SESSION['user']['id'] : '';
 $uploads = 'uploads/';
 
