@@ -31,8 +31,9 @@ function include_template($name, $data)
 /**
  * Форматирование цены
  *
- * @param int $arg
+ * Приводит цену к виду xx xxx руб.
  *
+ * @param int $arg
  * @return string
  */
 function format_price($arg)
@@ -66,7 +67,6 @@ function lot_time_end(string $end_date)
  * Подключение к БД
  *
  * @param array $database
- *
  * @return object $db_con
  */
 
@@ -87,7 +87,6 @@ function get_connect(array $database)
  * Получение категорий из БД
  *
  * @param object $db_con -- обьект подключения
- *
  * @return array $result
  */
 
@@ -107,7 +106,6 @@ function get_categories($db_con)
  * Получение объявлений из БД
  *
  * @param object $db_con -- обьект подключения
- *
  * @return array $result
  */
 function get_adverts($db_con)
@@ -128,14 +126,12 @@ function get_adverts($db_con)
 }
 
 /**
- * Получаем лот по его id
+ * Получает лот по его id
  *
  * @param object $db_con
  * @param int $id
- *
  * @return array $result
  */
-
 function get_item_by_id($db_con, int $id)
 {
     $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, l.author_id, l.end_date, c.title AS cat,
@@ -158,12 +154,11 @@ function get_item_by_id($db_con, int $id)
 }
 
 /**
- * Запись лота в БД
+ * Запись нового лота в БД
  *
  * @param object $db_con -- ресурс соединения
  * @param array $new_lot -- массив с новым товаром
  */
-
 function insert_lot($db_con, $new_lot)
 {
     $sql = "INSERT INTO lot(title, description, cat_id, start_price, img_path, rate_step, author_id, winner_id, end_date) 
@@ -207,10 +202,8 @@ function check_date_format($date)
  *
  * @param object $db_con
  * @param string $email
- *
  * @return bool
  */
-
 function check_user_email($db_con, string $email)
 {
 
@@ -339,7 +332,7 @@ function insert_new_rate($db_con, $user, $rate, $lot_id)
 
 
 /**
- * Приводит дату к читаемому виду в истории
+ * Приводит дату к читаемому виду в истории ставок
  *
  * @param $date
  * @return string
@@ -383,7 +376,7 @@ function history_time($date)
 }
 
 /**
- * Приводит склонения к правильному виду
+ * Приводит склонения к правильному виду в истории ставок
  *
  * @param int $number
  * @param array $ending_array
