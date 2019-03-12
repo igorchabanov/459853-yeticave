@@ -424,7 +424,7 @@ function get_count_items($db_con, string $phrase)
 {
     $phrase = mysqli_real_escape_string($db_con, $phrase);
 
-    $sql = "SELECT COUNT(*) AS total FROM lot WHERE MATCH (title, description) AGAINST ('$phrase')";
+    $sql = "SELECT COUNT(*) AS total FROM lot WHERE CURRENT_DATE() < end_date && MATCH (title, description) AGAINST ('$phrase' IN BOOLEAN MODE)";
 
     $query = mysqli_query($db_con, $sql);
 
@@ -459,7 +459,7 @@ function get_search_result($db_con, string $phrase, int $limit, int $offset)
               ) AS price
             FROM lot l
             JOIN category c ON l.cat_id = c.id
-            WHERE MATCH (l.title, l.description) AGAINST ('$phrase')
+            WHERE CURRENT_DATE() < l.end_date  AND MATCH (l.title, l.description) AGAINST ('$phrase' IN BOOLEAN MODE)
             ORDER BY l.created DESC LIMIT $limit
             OFFSET $offset";
 
@@ -472,4 +472,22 @@ function get_search_result($db_con, string $phrase, int $limit, int $offset)
     return mysqli_fetch_all($query, MYSQLI_ASSOC);
 }
 
+/**
+ * Определяет mime тип изображения
+ *
+ * @param $image
+ * @return string $result
+ */
 
+function get_image_extension($image)
+{
+    $file_mime = mime_content_type($image);
+    $result = '';
+    if ($file_mime === "image/jpeg" || $file_mime === "image/jpg") {
+        $result = '.jpg';
+    } elseif ($file_mime === "image/png") {
+        $result = '.png';
+    }
+
+    return $result;
+}
