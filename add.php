@@ -50,6 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if (!empty($_POST['category'])) {
+        if (!check_cat_exist($db_con, $_POST['category'])) {
+            $errors['category'] = 'Такой категории не существует';
+        }
+    }
+
     // Загрузка img
     if (isset($_FILES['lot-img']) && !$_FILES['lot-img']['error']) {
         $tmp_name = $_FILES['lot-img']['tmp_name'];

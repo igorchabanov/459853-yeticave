@@ -548,3 +548,29 @@ function get_image_extension($image)
 
     return $result;
 }
+
+/**
+ * Проверяет существует ли категория в БД
+ *
+ * @param $db_con
+ * @param $cat_id
+ * @return bool
+ */
+
+function check_cat_exist($db_con, $cat_id)
+{
+    $cat_id = mysqli_real_escape_string($db_con, $cat_id);;
+    $sql = "SELECT * FROM category WHERE id = '$cat_id'";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if ($query) {
+        if (mysqli_num_rows($query) > 0) {
+            return true;
+        }
+    } else {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return false;
+}
