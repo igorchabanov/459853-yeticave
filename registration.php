@@ -43,16 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_FILES['avatar']) && !$_FILES['avatar']['error']) {
         $tmp_name = $_FILES['avatar']['tmp_name'];
-        $file_mime = mime_content_type($tmp_name);
 
-        if ($file_mime !== "image/png" && $file_mime !== 'image/jpeg') {
+        if (get_image_extension($tmp_name)) {
+            $img_ext = get_image_extension($tmp_name);
+        } else {
             $errors['avatar'] = 'Неверный тип изображения';
-        }
-
-        if ($file_mime === "image/jpeg" || $file_mime === "image/jpg") {
-            $img_ext = '.jpg';
-        } elseif ($file_mime === "image/png") {
-            $img_ext = '.png';
         }
     }
 
