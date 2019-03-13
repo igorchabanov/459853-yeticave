@@ -153,6 +153,70 @@ function get_item_by_id($db_con, int $id)
     return mysqli_fetch_assoc($query);;
 }
 
+
+/**
+ * Получает товары в определенной категории
+ *
+ * @param $db_con
+ * @param int $id
+ * @param int $limit
+ * @param int $offset
+ * @return array|null
+ */
+
+function get_category_items($db_con, int $id, int $limit, int $offset)
+{
+
+    $id = mysqli_real_escape_string($db_con, $id);
+
+    $sql = "SELECT l.id, l.title, l.description, l.img_path, l.end_date, c.title AS cat_name,
+              (SELECT COALESCE( MAX(r.amount), lot.start_price)
+              FROM lot
+              LEFT JOIN rate r ON lot.id = r.lot_id
+              WHERE lot.id = l.id
+              ) AS price
+            FROM lot l
+            JOIN category c ON l.cat_id = c.id
+            WHERE l.cat_id = $id
+            ORDER BY l.created DESC LIMIT $limit
+            OFFSET $offset";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if (!$query) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);
+}
+
+/**
+ * Получает кол-во товаров в категории по id категории
+ *
+ * @param $db_con
+ * @param int $id
+ * @return int
+ */
+function get_count_category_items($db_con, int $id)
+{
+    $id = mysqli_real_escape_string($db_con, $id);
+
+    $sql = "SELECT COUNT(*) AS total 
+            FROM lot l
+            JOIN category c ON l.cat_id = c.id 
+            WHERE l.cat_id = $id";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if (!$query) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    $result = mysqli_fetch_assoc($query)['total'];
+
+    return (int)$result;
+}
+
 /**
  * Запись нового лота в БД
  *
@@ -417,7 +481,7 @@ function get_count_items($db_con, string $phrase)
 {
     $phrase = mysqli_real_escape_string($db_con, $phrase);
 
-    $sql = "SELECT COUNT(*) AS total FROM lot WHERE CURRENT_DATE() < end_date && MATCH (title, description) AGAINST ('$phrase' IN BOOLEAN MODE)";
+    $sql = "SELECT COUNT(*) AS total FROM lot WHERE MATCH (title, description) AGAINST ('$phrase' IN BOOLEAN MODE)";
 
     $query = mysqli_query($db_con, $sql);
 
@@ -452,7 +516,7 @@ function get_search_result($db_con, string $phrase, int $limit, int $offset)
               ) AS price
             FROM lot l
             JOIN category c ON l.cat_id = c.id
-            WHERE CURRENT_DATE() < l.end_date  AND MATCH (l.title, l.description) AGAINST ('$phrase' IN BOOLEAN MODE)
+            WHERE MATCH (l.title, l.description) AGAINST ('$phrase' IN BOOLEAN MODE)
             ORDER BY l.created DESC LIMIT $limit
             OFFSET $offset";
 

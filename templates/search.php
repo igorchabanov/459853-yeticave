@@ -1,12 +1,3 @@
-<nav class="nav">
-    <ul class="nav__list container">
-        <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <a href="all-lots.html"><?= htmlspecialchars($category['title']); ?></a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</nav>
 <div class="container">
     <section class="lots">
         <?php if (empty($items)): ?>
@@ -44,28 +35,8 @@
         <?php endif; ?>
     </section>
 
-    <?php if (count($pagination)): ?>
-        <ul class="pagination-list">
-
-            <?php if ($cur_page > 1): ?>
-                <li class="pagination-item pagination-item-prev">
-                    <a href='/search.php?search=<?= $search_phrase; ?>&page=<?= ($cur_page - 1); ?>'>Назад</a>
-                </li>
-            <?php endif; ?>
-
-            <?php foreach ($pagination as $page): ?>
-                <li class="pagination-item <?php ($page === $cur_page) ? print 'pagination-item-active' : ''; ?>">
-                    <a <?php ($cur_page !== $page) ? print "href='/search.php?search=$search_phrase&page=$page'" : '' ?>><?= $page; ?></a>
-                </li>
-            <?php endforeach; ?>
-
-            <?php if ($cur_page !== end($pagination)): ?>
-                <li class="pagination-item pagination-item-next">
-                    <a href='/search.php?search=<?= $search_phrase; ?>&page=<?= ($cur_page + 1); ?>'>Вперед</a>
-                </li>
-            <?php endif; ?>
-
-        </ul>
+    <?php if (!empty($pages)): ?>
+        <?= $pagination; ?>
     <?php endif; ?>
 
 </div>
