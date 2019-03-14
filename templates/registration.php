@@ -53,8 +53,8 @@
     </div>
 
     <?php
-    $classname = isset($errors['avatar']) ? 'form__item--invalid' : '';
-    $error = isset($errors['avatar']) ? $errors['avatar'] : '';
+    $classname = isset($errors['file']) ? 'form__item--invalid' : '';
+    $error = isset($errors['file']) ? $errors['file'] : '';
     ?>
 
     <div class="form__item form__item--file form__item--last <?= $classname; ?>">
@@ -66,7 +66,7 @@
             </div>
         </div>
         <div class="form__input-file">
-            <input class="visually-hidden" type="file" id="photo2" name="avatar" value="">
+            <input class="visually-hidden" type="file" id="photo2" name="image" value="">
             <label for="photo2">
                 <span>+ Добавить</span>
             </label>

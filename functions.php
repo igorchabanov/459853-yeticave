@@ -304,7 +304,7 @@ function insert_new_user($db_con, array $new_user)
         $new_user['email'],
         $password,
         $new_user['message'],
-        $new_user['avatar']
+        $new_user['file']
     ]);
 
     $result = mysqli_stmt_execute($stmt);
@@ -532,19 +532,84 @@ function get_search_result($db_con, string $phrase, int $limit, int $offset)
 /**
  * Определяет mime тип изображения
  *
+ *
  * @param $image
- * @return string $result
+ * @param $errors
+ * @param string $key_name
+ * @return mixed
  */
-
-function get_image_extension($image)
+function get_file_info($image, &$errors, $key_name = 'file')
 {
-    $file_mime = mime_content_type($image);
-    $result = '';
+    $file_info['tmp_name'] = $image['tmp_name'];
+    $file_mime = mime_content_type($file_info['tmp_name']);
+
     if ($file_mime === "image/jpeg" || $file_mime === "image/jpg") {
-        $result = '.jpg';
+        $file_info['extension'] = '.jpg';
     } elseif ($file_mime === "image/png") {
-        $result = '.png';
+        $file_info['extension'] = '.png';
+    } else {
+        $errors[$key_name] = 'Неверный тип изображения';
     }
 
-    return $result;
+    return $file_info;
+}
+
+/**
+ * Создает директорию если её нет и перемещает изображение в uploads
+ *
+ * @param string $uploads_path
+ * @param array $file_info
+ * @return string
+ */
+function user_upload_image(string $uploads_path, array $file_info)
+{
+    if (!is_dir($uploads_path)) {
+        mkdir($uploads_path, 0755, true);
+    }
+
+    $new_filename = uniqid() . $file_info['extension'];
+
+    if (move_uploaded_file($file_info['tmp_name'], $uploads_path . $new_filename)) {
+        return $uploads_path . $new_filename;
+    }
+}
+
+/**
+ * Получает лоты где сделаны ставки пользователем "Мои ставки"
+ *
+ * @param $db_con
+ * @param $user_id
+ * @return array|null
+ */
+function get_items_rates($db_con, $user_id)
+{
+
+    $user_id = mysqli_real_escape_string($db_con, $user_id);
+
+    $sql = "SELECT
+            l.id,
+            l.title,
+            l.img_path,
+            l.end_date,
+            l.winner_id,
+            l.author_id,
+            r.amount as total,
+            r.created,
+            u.name,
+            u.contact,
+            c.title as category
+            FROM lot l
+            JOIN rate r ON r.lot_id = l.id
+            JOIN user u ON l.author_id = u.id
+            JOIN category c ON l.cat_id = c.id
+            WHERE r.user_id = '$user_id'
+            ORDER BY r.created DESC";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if (!$query) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);
 }

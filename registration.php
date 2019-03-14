@@ -33,36 +33,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Email
-    if(!empty($_POST['email'])) {
-        if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    if (!empty($_POST['email'])) {
+        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'Некорректный email';
-        } elseif(check_user_email($db_con, $_POST['email'])) {
+        } elseif (check_user_email($db_con, $_POST['email'])) {
             $errors['email'] = 'Пользователь с таким email существует';
         }
     }
 
-    if (isset($_FILES['avatar']) && !$_FILES['avatar']['error']) {
-        $tmp_name = $_FILES['avatar']['tmp_name'];
-
-        if (get_image_extension($tmp_name)) {
-            $img_ext = get_image_extension($tmp_name);
-        } else {
-            $errors['avatar'] = 'Неверный тип изображения';
-        }
+    if (isset($_FILES['image']) && !$_FILES['image']['error']) {
+        $file_info = get_file_info($_FILES['image'], $errors);
     }
 
     if (!count($errors)) {
-        if (isset($_FILES['avatar']) && !$_FILES['avatar']['error']) {
-            if (!is_dir($uploads)) {
-                mkdir($uploads, 0777, true);
-            }
-
-            $new_filename = uniqid('user_') . $img_ext;
-            $new_user['avatar'] = $uploads . $new_filename;
-
-            move_uploaded_file($tmp_name, $uploads . $new_filename);
+        if (isset($_FILES['image']) && !$_FILES['image']['error']) {
+            $new_user['file'] = user_upload_image($uploads, $file_info);
         } else {
-            $new_user['avatar'] = '';
+            $new_user['file'] = '';
         }
 
         insert_new_user($db_con, $new_user);
