@@ -1,13 +1,3 @@
-<nav class="nav">
-    <ul class="nav__list container">
-        <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <a href="all-lots.html"><?= htmlspecialchars($category['title']); ?></a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</nav>
-
 <?php
     $classname = count($errors) ? 'form--invalid' : '';
 ?>
@@ -63,8 +53,8 @@
     </div>
 
     <?php
-    $classname = isset($errors['avatar']) ? 'form__item--invalid' : '';
-    $error = isset($errors['avatar']) ? $errors['avatar'] : '';
+    $classname = isset($errors['file']) ? 'form__item--invalid' : '';
+    $error = isset($errors['file']) ? $errors['file'] : '';
     ?>
 
     <div class="form__item form__item--file form__item--last <?= $classname; ?>">
@@ -76,7 +66,7 @@
             </div>
         </div>
         <div class="form__input-file">
-            <input class="visually-hidden" type="file" id="photo2" name="avatar" value="">
+            <input class="visually-hidden" type="file" id="photo2" name="image" value="">
             <label for="photo2">
                 <span>+ Добавить</span>
             </label>

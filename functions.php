@@ -31,8 +31,9 @@ function include_template($name, $data)
 /**
  * Форматирование цены
  *
- * @param int $arg
+ * Приводит цену к виду xx xxx руб.
  *
+ * @param int $arg
  * @return string
  */
 function format_price($arg)
@@ -66,7 +67,6 @@ function lot_time_end(string $end_date)
  * Подключение к БД
  *
  * @param array $database
- *
  * @return object $db_con
  */
 
@@ -87,7 +87,6 @@ function get_connect(array $database)
  * Получение категорий из БД
  *
  * @param object $db_con -- обьект подключения
- *
  * @return array $result
  */
 
@@ -107,7 +106,6 @@ function get_categories($db_con)
  * Получение объявлений из БД
  *
  * @param object $db_con -- обьект подключения
- *
  * @return array $result
  */
 function get_adverts($db_con)
@@ -128,14 +126,12 @@ function get_adverts($db_con)
 }
 
 /**
- * Получаем лот по его id
+ * Получает лот по его id
  *
  * @param object $db_con
  * @param int $id
- *
  * @return array $result
  */
-
 function get_item_by_id($db_con, int $id)
 {
     $sql = "SELECT l.id, l.title, l.description,  l.img_path, l.rate_step, l.author_id, l.end_date, c.title AS cat,
@@ -157,13 +153,76 @@ function get_item_by_id($db_con, int $id)
     return mysqli_fetch_assoc($query);;
 }
 
+
 /**
- * Запись лота в БД
+ * Получает товары в определенной категории
+ *
+ * @param $db_con
+ * @param int $id
+ * @param int $limit
+ * @param int $offset
+ * @return array|null
+ */
+
+function get_category_items($db_con, int $id, int $limit, int $offset)
+{
+
+    $id = mysqli_real_escape_string($db_con, $id);
+
+    $sql = "SELECT l.id, l.title, l.description, l.img_path, l.end_date, c.title AS cat_name,
+              (SELECT COALESCE( MAX(r.amount), lot.start_price)
+              FROM lot
+              LEFT JOIN rate r ON lot.id = r.lot_id
+              WHERE lot.id = l.id
+              ) AS price
+            FROM lot l
+            JOIN category c ON l.cat_id = c.id
+            WHERE l.cat_id = $id
+            ORDER BY l.created DESC LIMIT $limit
+            OFFSET $offset";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if (!$query) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);
+}
+
+/**
+ * Получает кол-во товаров в категории по id категории
+ *
+ * @param $db_con
+ * @param int $id
+ * @return int
+ */
+function get_count_category_items($db_con, int $id)
+{
+    $id = mysqli_real_escape_string($db_con, $id);
+
+    $sql = "SELECT COUNT(*) AS total 
+            FROM lot l
+            JOIN category c ON l.cat_id = c.id 
+            WHERE l.cat_id = $id";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if (!$query) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    $result = mysqli_fetch_assoc($query)['total'];
+
+    return (int)$result;
+}
+
+/**
+ * Запись нового лота в БД
  *
  * @param object $db_con -- ресурс соединения
  * @param array $new_lot -- массив с новым товаром
  */
-
 function insert_lot($db_con, $new_lot)
 {
     $sql = "INSERT INTO lot(title, description, cat_id, start_price, img_path, rate_step, author_id, winner_id, end_date) 
@@ -207,10 +266,8 @@ function check_date_format($date)
  *
  * @param object $db_con
  * @param string $email
- *
  * @return bool
  */
-
 function check_user_email($db_con, string $email)
 {
 
@@ -247,7 +304,7 @@ function insert_new_user($db_con, array $new_user)
         $new_user['email'],
         $password,
         $new_user['message'],
-        $new_user['avatar']
+        $new_user['file']
     ]);
 
     $result = mysqli_stmt_execute($stmt);
@@ -339,7 +396,7 @@ function insert_new_rate($db_con, $user, $rate, $lot_id)
 
 
 /**
- * Приводит дату к читаемому виду в истории
+ * Приводит дату к читаемому виду в истории ставок
  *
  * @param $date
  * @return string
@@ -383,7 +440,7 @@ function history_time($date)
 }
 
 /**
- * Приводит склонения к правильному виду
+ * Приводит склонения к правильному виду в истории ставок
  *
  * @param int $number
  * @param array $ending_array
@@ -424,7 +481,7 @@ function get_count_items($db_con, string $phrase)
 {
     $phrase = mysqli_real_escape_string($db_con, $phrase);
 
-    $sql = "SELECT COUNT(*) AS total FROM lot WHERE MATCH (title, description) AGAINST ('$phrase')";
+    $sql = "SELECT COUNT(*) AS total FROM lot WHERE MATCH (title, description) AGAINST ('$phrase' IN BOOLEAN MODE)";
 
     $query = mysqli_query($db_con, $sql);
 
@@ -459,7 +516,7 @@ function get_search_result($db_con, string $phrase, int $limit, int $offset)
               ) AS price
             FROM lot l
             JOIN category c ON l.cat_id = c.id
-            WHERE MATCH (l.title, l.description) AGAINST ('$phrase')
+            WHERE MATCH (l.title, l.description) AGAINST ('$phrase' IN BOOLEAN MODE)
             ORDER BY l.created DESC LIMIT $limit
             OFFSET $offset";
 
@@ -472,4 +529,87 @@ function get_search_result($db_con, string $phrase, int $limit, int $offset)
     return mysqli_fetch_all($query, MYSQLI_ASSOC);
 }
 
+/**
+ * Определяет mime тип изображения
+ *
+ *
+ * @param $image
+ * @param $errors
+ * @param string $key_name
+ * @return mixed
+ */
+function get_file_info($image, &$errors, $key_name = 'file')
+{
+    $file_info['tmp_name'] = $image['tmp_name'];
+    $file_mime = mime_content_type($file_info['tmp_name']);
 
+    if ($file_mime === "image/jpeg" || $file_mime === "image/jpg") {
+        $file_info['extension'] = '.jpg';
+    } elseif ($file_mime === "image/png") {
+        $file_info['extension'] = '.png';
+    } else {
+        $errors[$key_name] = 'Неверный тип изображения';
+    }
+
+    return $file_info;
+}
+
+/**
+ * Создает директорию если её нет и перемещает изображение в uploads
+ *
+ * @param string $uploads_path
+ * @param array $file_info
+ * @return string
+ */
+function user_upload_image(string $uploads_path, array $file_info)
+{
+    if (!is_dir($uploads_path)) {
+        mkdir($uploads_path, 0755, true);
+    }
+
+    $new_filename = uniqid() . $file_info['extension'];
+
+    if (move_uploaded_file($file_info['tmp_name'], $uploads_path . $new_filename)) {
+        return $uploads_path . $new_filename;
+    }
+}
+
+/**
+ * Получает лоты где сделаны ставки пользователем "Мои ставки"
+ *
+ * @param $db_con
+ * @param $user_id
+ * @return array|null
+ */
+function get_items_rates($db_con, $user_id)
+{
+
+    $user_id = mysqli_real_escape_string($db_con, $user_id);
+
+    $sql = "SELECT
+            l.id,
+            l.title,
+            l.img_path,
+            l.end_date,
+            l.winner_id,
+            l.author_id,
+            r.amount as total,
+            r.created,
+            u.name,
+            u.contact,
+            c.title as category
+            FROM lot l
+            JOIN rate r ON r.lot_id = l.id
+            JOIN user u ON l.author_id = u.id
+            JOIN category c ON l.cat_id = c.id
+            WHERE r.user_id = '$user_id'
+            ORDER BY r.created DESC";
+
+    $query = mysqli_query($db_con, $sql);
+
+    if (!$query) {
+        die('Произошла ошибка ' . mysqli_error($db_con));
+    }
+
+    return mysqli_fetch_all($query, MYSQLI_ASSOC);
+}

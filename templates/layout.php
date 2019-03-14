@@ -29,7 +29,16 @@
                 <?php if ($is_auth): ?>
                     <div class="user-menu__logged">
                         <p><?= htmlspecialchars($user_name['name']); ?></p>
-                        <a href="/logout.php">Выход</a>
+                        <ul class="user-menu__list">
+                            <li class="user-menu__item">
+                                <a href="/mybets.php">Мои ставки</a>
+                            </li>
+
+                            <li class="user-menu__item">
+                                <a href="/logout.php">Выход</a>
+                            </li>
+                        </ul>
+
                     </div>
                     <div>
                         <img src="<?= $user_name['avatar']; ?>" width="50" height="50" alt="">
@@ -39,6 +48,7 @@
                         <li class="user-menu__item">
                             <a href="/registration.php">Регистрация</a>
                         </li>
+
                         <li class="user-menu__item">
                             <a href="/login.php">Вход</a>
                         </li>
@@ -50,6 +60,41 @@
     </header>
 
     <main class="<?php ($home_page) ? print 'container' : ''; ?>">
+
+        <?php if ($home_page): ?>
+
+            <section class="promo">
+                <h2 class="promo__title">Нужен стафф для катки?</h2>
+                <p class="promo__text">На нашем интернет-аукционе ты найдёшь самое эксклюзивное сноубордическое и
+                    горнолыжное
+                    снаряжение.</p>
+                <ul class="promo__list">
+                    <!--заполните этот список из массива категорий-->
+
+                    <?php foreach ($categories as $category): ?>
+                        <li class="promo__item promo__item--boards">
+                            <a class="promo__link"
+                               href="/category.php?id=<?= $category['id'] ?>"><?= htmlspecialchars($category['title']); ?></a>
+                        </li>
+                    <?php endforeach; ?>
+
+                </ul>
+            </section>
+
+        <?php else: ?>
+
+            <nav class="nav">
+                <ul class="nav__list container">
+                    <?php foreach ($categories as $category): ?>
+                        <li class="nav__item">
+                            <a href="/category.php?id=<?= $category['id'] ?>"><?= htmlspecialchars($category['title']); ?></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </nav>
+
+        <?php endif; ?>
+
         <?= $page_content; ?>
     </main>
 </div>
@@ -60,7 +105,7 @@
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $category): ?>
                 <li class="nav__item">
-                    <a href="pages/all-lots.html"><?= htmlspecialchars($category['title']); ?></a>
+                    <a href="/category.php?id=<?= $category['id'] ?>"><?= htmlspecialchars($category['title']); ?></a>
                 </li>
             <?php endforeach; ?>
 
